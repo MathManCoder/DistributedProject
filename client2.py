@@ -8,14 +8,14 @@ import threading
 
 class Clients:
 
-    def __init__(self, mqttBroker, port, qos, user, passwd):
+    def __init__(self, mqttBroker, port, qos, username, passwd):
         self.mqttBroker = mqttBroker
         self.port = port
         self.qos = qos
-        self.user = user
+        self.username = username
         self.passwd = passwd
         self.client = mqtt.Client()
-        self.client.username_pw_set(username = self.user, password = self.passwd)
+        self.client.username_pw_set(username = self.username, password = self.passwd)
         self.client.connect(self.mqttBroker, self.port, self.qos)
         print("client created! and connected!")
 
@@ -24,7 +24,6 @@ class Clients:
     def publisher(self, topic):
         client = self.client
         while True:
-            # msg = input("Enter Message : ")
             msg = input()
             if msg == "stop":
                 break
@@ -35,10 +34,7 @@ class Clients:
     def subscriber(self, topic):
         client = self.client
         def on_message(client,userdata,msg):
-            print()
-            # print(f'recived message: {msg.payload.decode("utf-8")}')
             print(msg.payload.decode("utf-8"))
-            print()
         
         while True:
             client.loop_start()
@@ -48,15 +44,15 @@ class Clients:
 
 
 
-mqttBroker = "localhost"
+mqttBroker = "195.248.240.240"
 port = 1883
 qos = 2
-user = "hafez"
+username = "hafez"
 passwd = "hafez123"
 topic1 = "topic1"
 topic2 = "topic2"
 
-client2 = Clients(mqttBroker, port, qos, user, passwd)
+client2 = Clients(mqttBroker, port, qos, username, passwd)
 
 pub = threading.Thread(target=client2.publisher, args=(topic2,))
 sub = threading.Thread(target=client2.subscriber, args=(topic1,))
