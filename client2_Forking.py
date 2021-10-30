@@ -54,12 +54,19 @@ topic2 = "topic2"
 
 client2 = Clients(mqttBroker, port, qos, username, passwd)
 
-pub = threading.Thread(target=client2.publisher, args=(topic2,))
-sub = threading.Thread(target=client2.subscriber, args=(topic1,))
 
-pub.start()
-time.sleep(1)
-sub.start()
+#############   Forking    ##############
+getpid = os.getpid()
+pid = os.fork()
 
-pub.join()
-sub.join()
+# print(f"PID child {pid}")
+
+if (pid > 0):
+    # print(f'parrent uid = {getpid}')
+    client2.publisher(topic2)
+else:
+    # print(f'child uid = {getpid}')
+    client2.subscriber(topic1)
+#############   End Forking    ##############
+
+    

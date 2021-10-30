@@ -1,5 +1,6 @@
 # HafezShabrang
 
+import os
 import paho.mqtt.client as mqtt
 import time
 import threading
@@ -7,7 +8,7 @@ import threading
 
 class Clients:
 
-    def __init__(self, mqttBroker, port, qos, user, passwd):
+    def __init__(self, mqttBroker, port, qos, username, passwd):
         self.mqttBroker = mqttBroker
         self.port = port
         self.qos = qos
@@ -54,19 +55,17 @@ topic2 = "topic2"
 
 client1 = Clients(mqttBroker, port, qos, username, passwd)
 
-pub = threading.Thread(target=client1.publisher, args=(topic1,))
-sub = threading.Thread(target=client1.subscriber, args=(topic2,))
 
-pub.start()
-time.sleep(1)
-sub.start()
+#############   Forking    ##############
+getpid = os.getpid()
+pid = os.fork()
 
-pub.join()
-sub.join()
+# print(f"PID child {pid}")
 
-
-
-
-
-
-
+if (pid > 0):
+    # print(f'parrent uid = {getpid}')
+    client1.publisher(topic1)
+else:
+    # print(f'child uid = {getpid}')
+    client1.subscriber(topic2)
+#############   End Forking    ##############
